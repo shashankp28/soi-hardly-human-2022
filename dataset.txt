@@ -1,1 +1,5 @@
 https://www.kaggle.com/datasets/msambare/fer2013
+
+https://github.com/justinshenk/fer
+https://github.com/phamquiluan/ResidualMaskingNetwork
+https://github.com/gitshanks/fer2013

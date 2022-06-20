@@ -9,21 +9,22 @@ import time
 import cv2
 import os
 
+
 def detect_mask(frame, faceNet, maskNet):
-    (h,w)=frame.shape[:2]
-    blob=cv2.dnn.blobFromImage(frame,1.0,(224,224),(104.0,177.0,123.0))
+    (h, w) = frame.shape[:2]
+    blob = cv2.dnn.blobFromImage(frame, 1.0, (224, 224), (104.0, 177.0, 123.0))
 
     faceNet.setInput(blob)
     detections = faceNet.forward()
 
-    faces=[]
-    locs=[]
-    preds=[]
+    faces = []
+    locs = []
+    preds = []
 
     for i in range(0, detections.shape[2]):
 
-        confidence = detections[0,0,i,2]
-        
+        confidence = detections[0, 0, i, 2]
+
         if confidence > 0.66:
             box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
             (startX, startY, endX, endY) = box.astype("int")
@@ -41,10 +42,10 @@ def detect_mask(frame, faceNet, maskNet):
         faces = np.array(faces, dtype="float32")
         preds = maskNet.predict(faces, batch_size=32)
 
+    return (locs, preds)
 
-    return (locs,preds)
 
-prototxtPath = r"faceDetector\deploy.prototxt"
+prototxtPath = r"faceDetector\deploy.prototxt.txt"
 weightsPath = r"faceDetector\res10_300x300_ssd_iter_140000.caffemodel"
 faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
 
@@ -55,7 +56,7 @@ vs = VideoStream(src=0).start()
 
 while True:
     frame = vs.read()
-    frame = imutils.resize(frame, width = 400)
+    frame = imutils.resize(frame, width=400)
     (locs, preds) = detect_mask(frame, faceNet, maskNet)
     for (box, pred) in zip(locs, preds):
         (startX, startY, endX, endY) = box
@@ -67,12 +68,11 @@ while True:
         # display the label and bounding box rectangle on the output
         # frame
         cv2.putText(frame, label, (startX, startY - 10),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
         cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
     cv2.imshow("Frame", frame)
     key = cv2.waitKey(1) & 0xFF
     if key == ord("q"):
-            break
+        break
 cv2.destroyAllWindows()
 vs.stop()
-
