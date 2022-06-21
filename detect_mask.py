@@ -19,6 +19,7 @@ transform = transforms.Compose(
 )
 
 EMO_DICT = {0: "angry", 1: "fear", 2: "disgust", 3: "happy", 4: "sad", 5: "surprise", 6: "neutral"}
+EMO_COLOR_DICT = {0: (0, 0, 255), 1: (60, 20, 9), 2: (71,122,75), 3: (0,255,0), 4: (255,0,0), 5: (255,255,255), 6: (0,0,0)}
 
     
 def convert_to_square(xmin, ymin, xmax, ymax):
@@ -104,9 +105,10 @@ while True:
         label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
         # display the label and bounding box rectangle on the output
         # frame'''
-        cv2.putText(frame, EMO_DICT[preds[0].index(max(preds[0]))], (startX, startY - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 2)
-        cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
+        index = preds[0].index(max(preds[0]))
+        cv2.putText(frame, EMO_DICT[index], (startX, startY - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, EMO_COLOR_DICT[index], 2)
+        cv2.rectangle(frame, (startX, startY), (endX, endY), EMO_COLOR_DICT[index], 2)
     cv2.imshow("Frame", frame)
     key = cv2.waitKey(1) & 0xFF
     if key == ord("q"):
