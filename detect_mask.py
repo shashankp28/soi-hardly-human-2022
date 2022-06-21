@@ -68,7 +68,7 @@ def detect_mask(frame, faceNet, maskNet):
             output = torch.squeeze(maskNet(face), 0)
             proba = torch.softmax(output, 0)
             preds.append(proba.tolist())
-        print(preds)
+        #print(preds)
 
     return (locs, preds)
 
@@ -78,7 +78,7 @@ weightsPath = r"res10_300x300_ssd_iter_140000.caffemodel"
 faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
 
 maskNet = resmasking_dropout1()
-maskNet.load_state_dict(torch.load("Z_resmasking_dropout1_rot30_2019Nov30_13.32")['net'])
+maskNet.load_state_dict(torch.load("Z_resmasking_dropout1_rot30_2019Nov30_13.32",map_location=torch.device('cpu'))['net'])
 maskNet.eval()
 
 
@@ -91,21 +91,19 @@ while True:
     frame = vs.read()
     frame = imutils.resize(frame, width=400)
     (locs, preds) = detect_mask(frame, faceNet, maskNet)
-    '''
     # Change this part (pred == list containing 7 probabilities See EMO_DICT for labels)
     for (box, pred) in zip(locs, preds):
         (startX, startY, endX, endY) = box
-        (mask, withoutMask) = pred
+        '''(mask, withoutMask) = pred
         label = "Mask" if mask > withoutMask else "No Mask"
         color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
         # include the probability in the label
         label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
         # display the label and bounding box rectangle on the output
-        # frame
-        cv2.putText(frame, label, (startX, startY - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
-        cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
-    '''
+        # frame'''
+        cv2.putText(frame, 'happy', (startX, startY - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 2)
+        cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
     cv2.imshow("Frame", frame)
     key = cv2.waitKey(1) & 0xFF
     if key == ord("q"):
