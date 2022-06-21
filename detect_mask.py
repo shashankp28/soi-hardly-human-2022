@@ -12,11 +12,13 @@ import cv2
 import os
 from torchvision.transforms import transforms
 
+
+
 transform = transforms.Compose(
     transforms=[transforms.ToPILImage(), transforms.ToTensor()]
 )
 
-EMO_DICT = {0: "neutral", 1: "angry", 2: "disgust", 3: "fear", 4: "happy", 5: "sad", 6: "surprise"}
+EMO_DICT = {0: "angry", 1: "fear", 2: "disgust", 3: "happy", 4: "sad", 5: "surprise", 6: "neutral"}
 
     
 def convert_to_square(xmin, ymin, xmax, ymax):
@@ -68,8 +70,9 @@ def detect_mask(frame, faceNet, maskNet):
             output = torch.squeeze(maskNet(face), 0)
             proba = torch.softmax(output, 0)
             preds.append(proba.tolist())
-        #print(preds)
-
+        print(preds[0])
+        
+            # return the index of the max probability emotion
     return (locs, preds)
 
 
@@ -101,7 +104,7 @@ while True:
         label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
         # display the label and bounding box rectangle on the output
         # frame'''
-        cv2.putText(frame, 'happy', (startX, startY - 10),
+        cv2.putText(frame, EMO_DICT[preds[0].index(max(preds[0]))], (startX, startY - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 2)
         cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
     cv2.imshow("Frame", frame)
