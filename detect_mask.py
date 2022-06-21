@@ -4,7 +4,7 @@ from imutils.video import VideoStream
 import numpy as np
 import imutils
 import cv2
-from model import resmasking_dropout1
+from models.model import resmasking_dropout1
 from imutils.video import VideoStream
 import numpy as np
 import imutils
