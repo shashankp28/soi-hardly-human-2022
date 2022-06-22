@@ -18,8 +18,8 @@ transform = transforms.Compose(
     transforms=[transforms.ToPILImage(), transforms.ToTensor()]
 )
 
-EMO_DICT = {0: "angry", 1: "fear", 2: "disgust", 3: "happy", 4: "sad", 5: "surprise", 6: "neutral"}
-EMO_COLOR_DICT = {0: (0, 0, 255), 1: (60, 20, 9), 2: (71,122,75), 3: (0,255,0), 4: (255,0,0), 5: (255,255,255), 6: (0,0,0)}
+EMO_DICT = {0: "angry", 1: "disgust", 2: "fear", 3: "happy", 4: "sad", 5: "surprise", 6: "neutral"}
+EMO_COLOR_DICT = {0: (0, 0, 255), 2: (60, 20, 9), 1: (71,122,75), 3: (0,255,0), 4: (255,0,0), 5: (255,255,255), 6: (0,0,0)}
 
     
 def convert_to_square(xmin, ymin, xmax, ymax):
