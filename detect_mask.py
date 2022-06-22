@@ -58,7 +58,8 @@ def detect_mask(frame, faceNet, maskNet):
             (endX, endY) = (min(w - 1, endX), min(h - 1, endY))
             startX, startY, endX, endY = convert_to_square(startX, startY, endX, endY)
             face = frame[startY:endY, startX:endX]
-            face = cv2.resize(face, (224, 224))
+            try: face = cv2.resize(face, (224, 224))
+            except: break
             face = transform(face)
             face = torch.unsqueeze(face, dim=0)
             faces.append(face)
@@ -71,7 +72,6 @@ def detect_mask(frame, faceNet, maskNet):
             output = torch.squeeze(maskNet(face), 0)
             proba = torch.softmax(output, 0)
             preds.append(proba.tolist())
-        print(preds[0])
         
             # return the index of the max probability emotion
     return (locs, preds)
