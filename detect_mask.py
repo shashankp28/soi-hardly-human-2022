@@ -106,7 +106,8 @@ while True:
         # display the label and bounding box rectangle on the output
         # frame'''
         index = preds[0].index(max(preds[0]))
-        cv2.putText(frame, EMO_DICT[index], (startX, startY - 10),
+        label = "{}: {:.2f}%".format(EMO_DICT[index], preds[0][index]*100 )
+        cv2.putText(frame,label, (startX, startY - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.45, EMO_COLOR_DICT[index], 2)
         cv2.rectangle(frame, (startX, startY), (endX, endY), EMO_COLOR_DICT[index], 2)
     cv2.imshow("Frame", frame)
