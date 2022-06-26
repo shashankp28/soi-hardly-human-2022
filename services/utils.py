@@ -1,22 +1,15 @@
 import cv2
-import torch
 import numpy as np
-from models.model import resmasking_dropout1
-from torchvision.transforms import transforms
+import tensorflow as tf
 
-transform = transforms.Compose(
-    transforms=[transforms.ToPILImage(), transforms.ToTensor()]
-)
 
 EMO_DICT = {0: "angry", 1: "disgust", 2: "fear", 3: "happy", 4: "sad", 5: "surprise", 6: "neutral"}
 EMO_COLOR_DICT = {0: (0, 0, 255), 2: (60, 20, 9), 1: (71,122,75), 3: (0,255,0), 4: (255,0,0), 5: (255,255,255), 6: (0,0,0)}
 
 
-def model_loader(faceNet_paths, emotor_paths):
+def model_loader(faceNet_paths, emotor_path):
     faceNet = cv2.dnn.readNet(faceNet_paths[0], faceNet_paths[1])
-    emotor = resmasking_dropout1()
-    emotor.load_state_dict(torch.load(emotor_paths, map_location=torch.device('cpu'))['net'])
-    emotor.eval()
+    emotor = tf.keras.models.load_model(emotor_path)
     return faceNet, emotor
 
     
@@ -55,10 +48,12 @@ def detect_emotion(frame, faceNet, emotor):
             (endX, endY) = (min(w - 1, endX), min(h - 1, endY))
             startX, startY, endX, endY = convert_to_square(startX, startY, endX, endY)
             face = frame[startY:endY, startX:endX]
-            try: face = cv2.resize(face, (224, 224))
+            try: 
+                face = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
+                face = cv2.resize(face, (48, 48))
             except: break
-            face = transform(face)
-            face = torch.unsqueeze(face, dim=0)
+            face=np.array(face)
+            face=face.reshape(1,48,48,1)/255
             faces.append(face)
             locs.append((startX, startY, endX, endY))
 
@@ -66,7 +61,6 @@ def detect_emotion(frame, faceNet, emotor):
     
     if len(faces) > 0:
         for face in faces:
-            output = torch.squeeze(emotor(face), 0)
-            proba = torch.softmax(output, 0)
-            preds.append(proba.tolist())
+            output= emotor.predict(face).tolist()
+            preds.append(output[0])
     return (locs, preds)
