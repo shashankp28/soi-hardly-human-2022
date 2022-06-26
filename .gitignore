@@ -134,5 +134,5 @@ Z_resmasking_dropout1_rot30_2019Nov30_13.32
 model2
 EMOTOR_TEST
 data
-data_copy
+data_aug
 emotor.h5
