@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 data
 res10_300x300_ssd_iter_140000.caffemodel
-deploy.prototxt.txt
+deploy.prototxt
 Z_resmasking_dropout1_rot30_2019Nov30_13.32
 model2
 EMOTOR_TEST
